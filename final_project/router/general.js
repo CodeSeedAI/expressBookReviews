@@ -6,8 +6,27 @@ const public_users = express.Router();
 
 
 public_users.post("/register", (req,res) => {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+  const username = req.body.username
+  const password = req.body.password
+
+  if(!username || !password){
+      return res.status(201).json({message: "username or password not provided"});
+  }
+
+  const user = users.filter(user => {
+    return user.username == username
+  })
+
+  if(user.length > 0){
+    return res.status(400).json({message: "User already exists"});
+  }
+
+  users.push({
+    "username": username, 
+    "password": password    
+  })
+
+  return res.status(201).json({message: "User created"});
 });
 
 // Get the book list available in the shop
@@ -48,9 +67,24 @@ public_users.get('/author/:author',function (req, res) {
 });
 
 //  Get book review
-public_users.get('/review/:isbn',function (req, res) {
+public_users.get('/review/:isbn', function (req, res) {
     const book_list = books.filter((book) => {
-        return book.isbn == req.params.review
+        return book.isbn == req.params.isbn
+    })  
+
+    let book = {}
+
+    if (book_list.length > 0){
+        book = book_list[0]
+    }
+
+    return res.status(300).json(book.reviews);
+ });
+
+ //  Get book title
+public_users.get('/title/:title',function (req, res) {
+    const book_list = books.filter((book) => {
+        return book.title == req.params.title
     })  
 
     let book = {}
@@ -61,5 +95,6 @@ public_users.get('/review/:isbn',function (req, res) {
 
     return res.status(300).json(book);
  });
+
 
 module.exports.general = public_users;

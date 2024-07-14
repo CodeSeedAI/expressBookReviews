@@ -5,7 +5,12 @@ const customer_routes = require('./router/auth_users.js').authenticated;
 const users = require('./router/auth_users.js').users;
 const genl_routes = require('./router/general.js').general;
 
+const bodyParser = require('body-parser')
+
 const app = express();
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}))
 
 
 // Check if a user with the given username already exists
@@ -21,8 +26,6 @@ const doesExist = (username) => {
         return false;
     }
 }
-
-app.use(express.json());
 
 app.use("/customer",session({secret:"fingerprint_customer",resave: true, saveUninitialized: true}))
 
@@ -43,7 +46,6 @@ app.use("/customer/auth/*", function auth(req,res,next){
     }
     // Return error if username or password is missing
     return res.status(404).json({message: "Unable to register user."});
-
 });
  
 const PORT =5000;
